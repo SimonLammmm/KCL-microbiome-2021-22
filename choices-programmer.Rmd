@@ -114,7 +114,7 @@ glimpse(my_rdata) # check the data types in my_rdata
 
 ### Exercise 2
 
-In `my_excel`, the Odds Ratio and Combined Score columns are numbers stored as characters. Complete the code to convert these columns into numeric data types using `as.numeric()`.
+In `my_excel`, say the Odds Ratio and Combined Score columns were numbers stored as characters. Complete the code to convert these columns into numeric data types using `as.numeric()`.
 
 ```{r}
 
@@ -264,7 +264,7 @@ Question: what is the difference between `%in%` and `==`? What is the difference
 
 c("A", "B", "C") %in% LETTERS # A, B, and C, separately, exist as elements in LETTERS, to TRUE is returned three times
 
-c("A", "B", "C") == LETTERS # the LHS and RHS objects are not exactly the same, so FALSE is returned once
+c("A", "B", "C") == LETTERS # check the warning that appears
 
 ```
 
@@ -276,7 +276,7 @@ Is there a term in `my_plaintext` called "Chemical carcinogenesis"? How about "C
 
 ```{r}
 
-c("Chemical carcinogenesis", "Chronic inflammation") %in% my_plaintext$Term # TRUE FALSE
+___ %in% my_plaintext$Term
 
 ```
 
