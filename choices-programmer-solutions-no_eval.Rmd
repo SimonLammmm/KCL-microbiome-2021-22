@@ -52,7 +52,7 @@ TIP: Press Tab while your cursor is between the brackets of any function to see 
 
 ```{r}
 
-install.packages(c("readxl", "writexl", "dplyr", "ggplot2", "ggpubr")) # install the required packages for today
+
 
 options(max.print = 20) # don't let R spam the console
 
@@ -82,13 +82,13 @@ Complete the code below to save the `my_plaintext`, `my_excel`, and `my_rdata` o
 
 ```{r}
 
-library(___) # load the writexl package
+library(writexl) # load the writexl package
 
-write.csv(x = my_plaintext, file = "___.csv") # save my_plaintext to the file "my_plaintext.csv"
+write.csv(x = my_plaintext, file = "my_plaintext.csv") # save my_plaintext to the file "my_plaintext.csv"
 
-write_xlsx(x = ___, path = "___.xlsx") # save my_excel to the file "my_excel.xlsx"
+write_xlsx(x = my_excel, path = "my_excel.xlsx") # save my_excel to the file "my_excel.xlsx"
 
-save(my_rdata, ___ = "___.RData") # save my_rdata to the file "my_rdata.RData"
+save(my_rdata, file = "my_rdata.RData") # save my_rdata to the file "my_rdata.RData"
 
 ```
 
@@ -120,9 +120,9 @@ In `my_excel`, the Odds Ratio and Combined Score columns are numbers stored as c
 
 my_excel$`Odds Ratio` <- as.numeric(my_excel$`Odds Ratio`) # convert the Odds Ratio column to numeric
 
-my_excel$`Combined Score` <- ___(___$___) # convert the Combined Score column to numeric
+my_excel$`Combined Score` <- as.numeric(my_excel$`Combined Score`) # convert the Combined Score column to numeric
 
-glimpse(___) # check the data types in my_excel again
+glimpse(my_excel) # check the data types in my_excel again
 
 ```
 
@@ -176,9 +176,9 @@ Use base R functions to extract the rows in `my_excel` which have Odds Ratio gre
 
 ```{r}
 
-idx3 <- which(my_excel$___ > ___) # find the indices which have Odds Ratio greater than 200
+idx3 <- which(my_excel$`Odds Ratio` > 200) # find the indices which have Odds Ratio greater than 200
 
-my_excel[___,___] # return entire rows for those indices
+my_excel[idx3, ] # return entire rows for those indices
 
 ```
 
@@ -186,9 +186,9 @@ Use base R functions to extract the rows in `my_excel` in which Term contains th
 
 ```{r}
 
-idx4 <- grep("___", my_excel$___) # find the indices for which Term includes the text "membrane"
+idx4 <- grep("membrane", my_excel$Term) # find the indices for which Term includes the text "membrane"
 
-___[___,___] # return entire rows for those indices
+my_excel[idx4, ] # return entire rows for those indices
 
 ```
 
@@ -216,7 +216,7 @@ Use `dplyr` functions to extract the rows in `my_excel` which have Odds Ratio gr
 
 ```{r}
 
-my_excel %>% filter(___ > ___)
+my_excel %>% filter(`Odds Ratio` > 200)
 
 ```
 
@@ -236,13 +236,13 @@ Write code to extract all Terms in `my_excel` containing the text "neuron" for w
 
 ```{r}
 
-my_excel
+idx5 <- which(my_excel$`P-value` < 1e-4) # find the indices with P-value < 1e-4
+my_excel_after_idx5 <- my_excel[idx5, ] # subset by idx5
+idx6 <- grep("neuron", my_excel_after_idx5$Term) # find the indices with Term containing "neuron"
+my_excel_after_idx6 <- my_excel_after_idx5[idx6, ] # subset by idx6
+my_excel_after_idx6$Term # extract the Term column
 
-
-
-
-
-
+my_excel %>% filter(`P-value` < 1e-4) %>% filter(grepl("neuron", Term)) %>% select(Term) # dplyr
 
 ```
 
@@ -286,7 +286,7 @@ To write an `if()` statement, first specify the condition, then write commands t
 
 If the condition is not satisfied, then the commands in the `else {...}` block will be run, if one is present.
 
-It is possible to chain multiple `if()` statements by using `else if()`
+It is possible to chain multiple `if()` statements by using `else if()`.
 
 ```{r}
 
@@ -308,21 +308,21 @@ Change the code below to print significance stars to the screen: `***` for p-val
 
 my_pvalue2 <- 0.0001
 
-if(my_pvalue2 < 0.001) {       # condition 1: less than 0.001
-    cat("***\n")               # print ***
-} else if(my_pvalue2 < ___) {  # condition 2: less than 0.01
-    cat("___\n")               # print **
-} else if(___) {               # condition 3: less than 0.05
-    ___                        # print *
-} else if(___) ___             # condition 4: greater than or equal to 0.05
-                               # print n.s.
+if(my_pvalue2 < 0.001) {         # condition 1: less than 0.001
+    cat("***\n")                 # print ***
+} else if(my_pvalue2 < 0.01) {   # condition 2: less than 0.01
+    cat("**\n")                  # print **
+} else if(my_pvalue2 < 0.05) {   # condition 3: less than 0.05
+    cat("*\n")                   # print *
+} else if(my_pvalue2 >= 0.05) {  # condition 4: greater than or equal to 0.05
+    cat("n.s.\n")                # print n.s.
+}
 
 ```
 
 Sometimes we want to run code more than once, for example if we want to process all elements of a list in the same way.
-## The `for()` loop
 
-Iterate over a list using the `for()` loop.
+We can iterate over a list using the `for()` loop.
 
 This means doing the same set of commands for each item in the loop.
 
@@ -332,11 +332,11 @@ Then, write the commands to be done of those items in a `for()` loop code block.
 
 ```{r}
 
-my_interest <- c("neuron", "membrane", "bacteria") # initialise a list of items to iterate over
+my_interest <- c("neuron", "membrane", "development") # initialise a list of items to iterate over
 
 for(item in my_interest) { # go through the items in the my_interest list one by one
     cat("I am interested in", item, "\n") # run these commands once per item
-    cat(toupper(item), "IS THE BEST!\n")
+    cat(toupper(item), "IS NOW IN UPPERCASE\n")
 }
 
 ```
@@ -383,17 +383,17 @@ Use a `for()` loop to find all of the Terms in `my_excel` which contain: a) "neu
 
 ```{r}
 
-my_interest2 <- c("neuron", ___, ___)
+my_interest2 <- c("neuron", "membrane", "development")
 
 # using base R
 for(item in my_interest2) {
-    idx8 <- grep(___, ___$___)
-    print(my_excel$___[___])
+    idx8 <- grep(item, my_excel$Term)
+    print(my_excel$Term[idx8])
 }
 
 # using dplyr
 for(item in my_interest2) {
-    my_excel %>% filter(grepl(___, ___)) %>% select(___) %>% print()
+    my_excel %>% filter(grepl(item, Term)) %>% select(Term) %>% print()
 }
 
 # note: when inside a for loop, we need to call print() in order to output to the console
@@ -408,28 +408,28 @@ Be warned. The following code will throw errors or warnings.
 
 ```{r}
 
+try({
+    read.csv(file = "non_existent_file.csv") # R can't find the file, so it threw an error and stopped execution
+})
 
-read.csv(file = "non_existent_file.csv") # R can't find the file, so it threw an error and stopped execution
+cat("\n")
 
+try({
+    my_warning <- c("hello", 1, 3e-9, FALSE) 
+    as.integer(my_warning) # R gave an error because it can't convert all the data into integers. We need to reassess that that's what we really want to do
+})
 
+cat("\n")
 
+try({
+    library(ggpubr) # R gave some general package warnings. These are safe to ignore, but always make sure that your output is sensible when using the package functions
+})
 
+cat("\n")
 
-my_warning <- c("hello", 1, 3e-9, FALSE) 
-as.integer(my_warning) # R gave an error because it can't convert all the data into integers. We need to reassess that that's what we really want to do
-
-
-
-
-
-library(ggpubr) # R gave some general package warnings. These are safe to ignore, but always make sure that your output is sensible when using the package functions
-
-
-
-
-
-my_excel[100] # for more complicated errors, search the error description online
-
+try({
+    my_excel[100] # for more complicated errors, search the error description online
+})
 
 ```
 
@@ -439,21 +439,21 @@ Run the following commands, which will throw warnings or errors. Reason with you
 
 ```{r}
 
+try({
+    log(-1)
+})
 
-log(-1)
+cat("\n")
 
+try({
+    library(ggplto2)
+})
 
+cat("\n")
 
-
-
-library(ggplto2)
-
-
-
-
-
-my_excel %>% filter(c(TRUE, TRUE, TRUE))
-
+try({
+    my_excel %>% filter(c(TRUE, TRUE, TRUE))
+})
 
 ```
 
@@ -485,7 +485,7 @@ Find all of the terms in `my_excel` for which Overlap contains two digits, follo
 
 ```{r}
 
-my_excel
+my_excel %>% filter(grepl("\\d{2}/\\d{3}", Overlap)) %>% select(Term)
 # \\d{2} means match 2 digits
 # / means match the forward slash
 # \\d{3} means match 3 digits
@@ -496,13 +496,13 @@ For the first 20 terms in `my_excel`, check if the GO tag is there, and if it is
 
 ```{r}
 
-my_excel$Term
-# you'll need:
-  # for loop
-  # if statement
-  # else statement
-  # grep
-
+for (i in 1:20) {
+    if(grepl("GO:\\d+", my_excel$Term[i])) {
+        cat(my_excel$Term[i], "\n")
+    } else {
+        cat("uninteresting\n")
+    }
+}
 
 ```
 
@@ -514,10 +514,10 @@ Fix the errors in the below code.
 
 my_newdata <- my_excel[2:1000,] %>% filter(`Odds Ratio` > 100)
 
-for (geneset %in% unique(my_newdata$Gene_set)) {
-    my_loopdata <- my_newdata %>% filter(Gene_set = geneset)
-    my_sum <- sum(my_loopdata@`Odds Ratio`)
-    cat("The sum for", geenset, is, my_sum, "\n")
+for (geneset in unique(my_newdata$Gene_set)) {
+    my_loopdata <- my_newdata %>% filter(Gene_set == geneset)
+    my_sum <- sum(my_loopdata$`Odds Ratio`)
+    cat("The sum for", geneset, "is", my_sum, "\n")
 }
 
 ```

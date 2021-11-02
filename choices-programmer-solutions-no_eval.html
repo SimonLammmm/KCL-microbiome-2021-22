@@ -223,9 +223,7 @@ load(&quot;terms.RData&quot;)</code></pre>
 <p>To read Excel files, use <code>read_excel()</code> from the <code>readxl</code> package.</p>
 <p>To read RData files, use <code>load()</code>.</p>
 <p>TIP: Press Tab while your cursor is between the brackets of any function to see its usage.</p>
-<pre class="r"><code>install.packages(c(&quot;readxl&quot;, &quot;writexl&quot;, &quot;dplyr&quot;, &quot;ggplot2&quot;, &quot;ggpubr&quot;)) # install the required packages for today
-
-options(max.print = 20) # don&#39;t let R spam the console
+<pre class="r"><code>options(max.print = 20) # don&#39;t let R spam the console
 
 library(readxl) # load the readxl package
 
@@ -244,13 +242,13 @@ load(&quot;terms.RData&quot;) # read the RData file</code></pre>
 <p>To write Excel files, use <code>write_xlsx()</code> from the <code>writexl</code> package.</p>
 <p>To write RData files, use <code>save()</code>.</p>
 <p>Complete the code below to save the <code>my_plaintext</code>, <code>my_excel</code>, and <code>my_rdata</code> objects to the files my_plaintext.csv, my_excel.xlsx, and my_rdata.RData, respectively.</p>
-<pre class="r"><code>library(___) # load the writexl package
+<pre class="r"><code>library(writexl) # load the writexl package
 
-write.csv(x = my_plaintext, file = &quot;___.csv&quot;) # save my_plaintext to the file &quot;my_plaintext.csv&quot;
+write.csv(x = my_plaintext, file = &quot;my_plaintext.csv&quot;) # save my_plaintext to the file &quot;my_plaintext.csv&quot;
 
-write_xlsx(x = ___, path = &quot;___.xlsx&quot;) # save my_excel to the file &quot;my_excel.xlsx&quot;
+write_xlsx(x = my_excel, path = &quot;my_excel.xlsx&quot;) # save my_excel to the file &quot;my_excel.xlsx&quot;
 
-save(my_rdata, ___ = &quot;___.RData&quot;) # save my_rdata to the file &quot;my_rdata.RData&quot;</code></pre>
+save(my_rdata, file = &quot;my_rdata.RData&quot;) # save my_rdata to the file &quot;my_rdata.RData&quot;</code></pre>
 <p>Which file would you give to 1) an R statistician, 2) a Python statistician, 3) a non-statistician?</p>
 </div>
 </div>
@@ -270,9 +268,9 @@ glimpse(my_rdata) # check the data types in my_rdata</code></pre>
 <p>In <code>my_excel</code>, the Odds Ratio and Combined Score columns are numbers stored as characters. Complete the code to convert these columns into numeric data types using <code>as.numeric()</code>.</p>
 <pre class="r"><code>my_excel$`Odds Ratio` &lt;- as.numeric(my_excel$`Odds Ratio`) # convert the Odds Ratio column to numeric
 
-my_excel$`Combined Score` &lt;- ___(___$___) # convert the Combined Score column to numeric
+my_excel$`Combined Score` &lt;- as.numeric(my_excel$`Combined Score`) # convert the Combined Score column to numeric
 
-glimpse(___) # check the data types in my_excel again</code></pre>
+glimpse(my_excel) # check the data types in my_excel again</code></pre>
 </div>
 </div>
 <div id="subsetting-with-base-r" class="section level2">
@@ -305,13 +303,13 @@ my_plaintext[idx2, ] # returns entire rows in which the terms contain &quot;neur
 <div id="exercise-3" class="section level3">
 <h3>Exercise 3</h3>
 <p>Use base R functions to extract the rows in <code>my_excel</code> which have Odds Ratio greater than 200.</p>
-<pre class="r"><code>idx3 &lt;- which(my_excel$___ &gt; ___) # find the indices which have Odds Ratio greater than 200
+<pre class="r"><code>idx3 &lt;- which(my_excel$`Odds Ratio` &gt; 200) # find the indices which have Odds Ratio greater than 200
 
-my_excel[___,___] # return entire rows for those indices</code></pre>
+my_excel[idx3, ] # return entire rows for those indices</code></pre>
 <p>Use base R functions to extract the rows in <code>my_excel</code> in which Term contains the text “membrane”.</p>
-<pre class="r"><code>idx4 &lt;- grep(&quot;___&quot;, my_excel$___) # find the indices for which Term includes the text &quot;membrane&quot;
+<pre class="r"><code>idx4 &lt;- grep(&quot;membrane&quot;, my_excel$Term) # find the indices for which Term includes the text &quot;membrane&quot;
 
-___[___,___] # return entire rows for those indices</code></pre>
+my_excel[idx4, ] # return entire rows for those indices</code></pre>
 </div>
 </div>
 <div id="subsetting-with-dplyr" class="section level2">
@@ -327,7 +325,7 @@ my_plaintext %&gt;% filter(`Combined.Score` &gt; 1000)</code></pre>
 <div id="exercise-4" class="section level3">
 <h3>Exercise 4</h3>
 <p>Use <code>dplyr</code> functions to extract the rows in <code>my_excel</code> which have Odds Ratio greater than 200</p>
-<pre class="r"><code>my_excel %&gt;% filter(___ &gt; ___)</code></pre>
+<pre class="r"><code>my_excel %&gt;% filter(`Odds Ratio` &gt; 200)</code></pre>
 <p>Use <code>dplyr</code> functions to extract the rows in <code>my_excel</code> in which Term contains the text “membrane”. (Advanced)</p>
 <pre class="r"><code>my_excel %&gt;% filter(grepl(&quot;membrane&quot;, Term))</code></pre>
 <p>Reason with yourself why needed to call <code>grepl()</code> within <code>filter()</code>.</p>
@@ -335,7 +333,13 @@ my_plaintext %&gt;% filter(`Combined.Score` &gt; 1000)</code></pre>
 <div id="free-practice" class="section level3">
 <h3>Free practice</h3>
 <p>Write code to extract all Terms in <code>my_excel</code> containing the text “neuron” for which P-value is less than 10^-4. It’s your choice whether you use base R functions or <code>dplyr</code> functions!</p>
-<pre class="r"><code>my_excel</code></pre>
+<pre class="r"><code>idx5 &lt;- which(my_excel$`P-value` &lt; 1e-4) # find the indices with P-value &lt; 1e-4
+my_excel_after_idx5 &lt;- my_excel[idx5, ] # subset by idx5
+idx6 &lt;- grep(&quot;neuron&quot;, my_excel_after_idx5$Term) # find the indices with Term containing &quot;neuron&quot;
+my_excel_after_idx6 &lt;- my_excel_after_idx5[idx6, ] # subset by idx6
+my_excel_after_idx6$Term # extract the Term column
+
+my_excel %&gt;% filter(`P-value` &lt; 1e-4) %&gt;% filter(grepl(&quot;neuron&quot;, Term)) %&gt;% select(Term) # dplyr</code></pre>
 </div>
 </div>
 <div id="operators-and-control-structures" class="section level2">
@@ -357,7 +361,7 @@ c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;) == LETTERS # the LHS and RHS obje
 <p>Control structures allow us to ask R to make decisions about what code to run. The key structures are <code>if()</code>, <code>else</code>, <code>for()</code>, and <code>while()</code>.</p>
 <p>To write an <code>if()</code> statement, first specify the condition, then write commands to be run if the condition is satisfied.</p>
 <p>If the condition is not satisfied, then the commands in the <code>else {...}</code> block will be run, if one is present.</p>
-<p>It is possible to chain multiple <code>if()</code> statements by using <code>else if()</code></p>
+<p>It is possible to chain multiple <code>if()</code> statements by using <code>else if()</code>.</p>
 <pre class="r"><code>my_pvalue &lt;- 0.01
 
 if(my_pvalue &lt; 0.05) {                   # condition 1
@@ -371,24 +375,25 @@ if(my_pvalue &lt; 0.05) {                   # condition 1
 <p>Change the code below to print significance stars to the screen: <code>***</code> for p-values better than 0.001, <code>**</code> for p-values better than 0.01, <code>*</code> for p-values better than 0.05, and <code>n.s.</code> for p-values worse or equal to 0.05. Change the value of <code>my_pvalue2</code> to test your code.</p>
 <pre class="r"><code>my_pvalue2 &lt;- 0.0001
 
-if(my_pvalue2 &lt; 0.001) {       # condition 1: less than 0.001
-    cat(&quot;***\n&quot;)               # print ***
-} else if(my_pvalue2 &lt; ___) {  # condition 2: less than 0.01
-    cat(&quot;___\n&quot;)               # print **
-} else if(___) {               # condition 3: less than 0.05
-    ___                        # print *
-} else if(___) ___             # condition 4: greater than or equal to 0.05
-                               # print n.s.</code></pre>
-<p>Sometimes we want to run code more than once, for example if we want to process all elements of a list in the same way. ## The <code>for()</code> loop</p>
-<p>Iterate over a list using the <code>for()</code> loop.</p>
+if(my_pvalue2 &lt; 0.001) {         # condition 1: less than 0.001
+    cat(&quot;***\n&quot;)                 # print ***
+} else if(my_pvalue2 &lt; 0.01) {   # condition 2: less than 0.01
+    cat(&quot;**\n&quot;)                  # print **
+} else if(my_pvalue2 &lt; 0.05) {   # condition 3: less than 0.05
+    cat(&quot;*\n&quot;)                   # print *
+} else if(my_pvalue2 &gt;= 0.05) {  # condition 4: greater than or equal to 0.05
+    cat(&quot;n.s.\n&quot;)                # print n.s.
+}</code></pre>
+<p>Sometimes we want to run code more than once, for example if we want to process all elements of a list in the same way.</p>
+<p>We can iterate over a list using the <code>for()</code> loop.</p>
 <p>This means doing the same set of commands for each item in the loop.</p>
 <p>First, initialise a list of items that you’re interested in.</p>
 <p>Then, write the commands to be done of those items in a <code>for()</code> loop code block.</p>
-<pre class="r"><code>my_interest &lt;- c(&quot;neuron&quot;, &quot;membrane&quot;, &quot;bacteria&quot;) # initialise a list of items to iterate over
+<pre class="r"><code>my_interest &lt;- c(&quot;neuron&quot;, &quot;membrane&quot;, &quot;development&quot;) # initialise a list of items to iterate over
 
 for(item in my_interest) { # go through the items in the my_interest list one by one
     cat(&quot;I am interested in&quot;, item, &quot;\n&quot;) # run these commands once per item
-    cat(toupper(item), &quot;IS THE BEST!\n&quot;)
+    cat(toupper(item), &quot;IS NOW IN UPPERCASE\n&quot;)
 }</code></pre>
 <p>You can iterate over a numerical range instead of items in a list.</p>
 <pre class="r"><code>for(i in 1:10) {
@@ -411,17 +416,17 @@ while(!grepl(&quot;retinoic&quot;, my_term)) {  # iterate until we find “retin
 <div id="exercise-7" class="section level3">
 <h3>Exercise 7</h3>
 <p>Use a <code>for()</code> loop to find all of the Terms in <code>my_excel</code> which contain: a) “neuron”, b) “membrane”, c) “development”. It’s your choice whether you want to use base R functions or <code>dplyr</code> for the subsetting!</p>
-<pre class="r"><code>my_interest2 &lt;- c(&quot;neuron&quot;, ___, ___)
+<pre class="r"><code>my_interest2 &lt;- c(&quot;neuron&quot;, &quot;membrane&quot;, &quot;development&quot;)
 
 # using base R
 for(item in my_interest2) {
-    idx8 &lt;- grep(___, ___$___)
-    print(my_excel$___[___])
+    idx8 &lt;- grep(item, my_excel$Term)
+    print(my_excel$Term[idx8])
 }
 
 # using dplyr
 for(item in my_interest2) {
-    my_excel %&gt;% filter(grepl(___, ___)) %&gt;% select(___) %&gt;% print()
+    my_excel %&gt;% filter(grepl(item, Term)) %&gt;% select(Term) %&gt;% print()
 }
 
 # note: when inside a for loop, we need to call print() in order to output to the console</code></pre>
@@ -431,42 +436,46 @@ for(item in my_interest2) {
 <h2>Error handling</h2>
 <p>We need to understand why errors and warnings occur. We need to understand which warnings can or cannot be ignored. We need to know how to deal with errors and fix them.</p>
 <p>Be warned. The following code will throw errors or warnings.</p>
-<pre class="r"><code>read.csv(file = &quot;non_existent_file.csv&quot;) # R can&#39;t find the file, so it threw an error and stopped execution
+<pre class="r"><code>try({
+    read.csv(file = &quot;non_existent_file.csv&quot;) # R can&#39;t find the file, so it threw an error and stopped execution
+})
 
+cat(&quot;\n&quot;)
 
+try({
+    my_warning &lt;- c(&quot;hello&quot;, 1, 3e-9, FALSE) 
+    as.integer(my_warning) # R gave an error because it can&#39;t convert all the data into integers. We need to reassess that that&#39;s what we really want to do
+})
 
+cat(&quot;\n&quot;)
 
+try({
+    library(ggpubr) # R gave some general package warnings. These are safe to ignore, but always make sure that your output is sensible when using the package functions
+})
 
-my_warning &lt;- c(&quot;hello&quot;, 1, 3e-9, FALSE) 
-as.integer(my_warning) # R gave an error because it can&#39;t convert all the data into integers. We need to reassess that that&#39;s what we really want to do
+cat(&quot;\n&quot;)
 
-
-
-
-
-library(ggpubr) # R gave some general package warnings. These are safe to ignore, but always make sure that your output is sensible when using the package functions
-
-
-
-
-
-my_excel[100] # for more complicated errors, search the error description online</code></pre>
+try({
+    my_excel[100] # for more complicated errors, search the error description online
+})</code></pre>
 <div id="exercise-8" class="section level3">
 <h3>Exercise 8</h3>
 <p>Run the following commands, which will throw warnings or errors. Reason with yourself or check online to understand what happened. Change the code to clear the error.</p>
-<pre class="r"><code>log(-1)
+<pre class="r"><code>try({
+    log(-1)
+})
 
+cat(&quot;\n&quot;)
 
+try({
+    library(ggplto2)
+})
 
+cat(&quot;\n&quot;)
 
-
-library(ggplto2)
-
-
-
-
-
-my_excel %&gt;% filter(c(TRUE, TRUE, TRUE))</code></pre>
+try({
+    my_excel %&gt;% filter(c(TRUE, TRUE, TRUE))
+})</code></pre>
 </div>
 </div>
 <div id="extension-regular-expressions" class="section level2">
@@ -480,25 +489,26 @@ my_excel %&gt;% filter(c(TRUE, TRUE, TRUE))</code></pre>
 <div id="free-practice-1" class="section level3">
 <h3>Free practice</h3>
 <p>Find all of the terms in <code>my_excel</code> for which Overlap contains two digits, followed by a forward slash, followed by three digits.</p>
-<pre class="r"><code>my_excel
+<pre class="r"><code>my_excel %&gt;% filter(grepl(&quot;\\d{2}/\\d{3}&quot;, Overlap)) %&gt;% select(Term)
 # \\d{2} means match 2 digits
 # / means match the forward slash
 # \\d{3} means match 3 digits</code></pre>
 <p>For the first 20 terms in <code>my_excel</code>, check if the GO tag is there, and if it is, print the term to the screen. If the term doesn’t have a GO tag, print “uninteresting” to the screen instead.</p>
-<pre class="r"><code>my_excel$Term
-# you&#39;ll need:
-  # for loop
-  # if statement
-  # else statement
-  # grep</code></pre>
+<pre class="r"><code>for (i in 1:20) {
+    if(grepl(&quot;GO:\\d+&quot;, my_excel$Term[i])) {
+        cat(my_excel$Term[i], &quot;\n&quot;)
+    } else {
+        cat(&quot;uninteresting\n&quot;)
+    }
+}</code></pre>
 <p>The below code is intended to extract rows 2 to 1000 in <code>my_excel</code>, filter those rows for those with Odds Ratio above 100, and return the sum of all values in the Odds Ratio column for each gene set.</p>
 <p>Fix the errors in the below code.</p>
 <pre class="r"><code>my_newdata &lt;- my_excel[2:1000,] %&gt;% filter(`Odds Ratio` &gt; 100)
 
-for (geneset %in% unique(my_newdata$Gene_set)) {
-    my_loopdata &lt;- my_newdata %&gt;% filter(Gene_set = geneset)
-    my_sum &lt;- sum(my_loopdata@`Odds Ratio`)
-    cat(&quot;The sum for&quot;, geenset, is, my_sum, &quot;\n&quot;)
+for (geneset in unique(my_newdata$Gene_set)) {
+    my_loopdata &lt;- my_newdata %&gt;% filter(Gene_set == geneset)
+    my_sum &lt;- sum(my_loopdata$`Odds Ratio`)
+    cat(&quot;The sum for&quot;, geneset, &quot;is&quot;, my_sum, &quot;\n&quot;)
 }</code></pre>
 <p>Congratulations for reaching the end of this course!</p>
 </div>

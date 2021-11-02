@@ -239,6 +239,10 @@ my_plaintext &lt;- read.csv(&quot;terms.csv&quot;) # read the plaintext file
 
 my_excel &lt;- read_excel(&quot;terms.xlsx&quot;) # read the excel file
 
+my_excel$`Odds Ratio` &lt;- as.numeric(my_excel$`Odds Ratio`) # convert the Odds Ratio column to numeric
+
+my_excel$`Combined Score` &lt;- as.numeric(my_excel$`Combined Score`) # convert the Combined Score column to numeric
+
 load(&quot;terms.RData&quot;) # read the RData file</code></pre>
 <div id="exercise-1" class="section level3">
 <h3>Exercise 1</h3>
@@ -246,7 +250,6 @@ load(&quot;terms.RData&quot;) # read the RData file</code></pre>
 <p>To write Excel files, use <code>write_xlsx()</code> from the <code>writexl</code> package.</p>
 <p>To write RData files, use <code>save()</code>.</p>
 <p>Complete the code below to save the <code>my_plaintext</code>, <code>my_excel</code>, and <code>my_rdata</code> objects to the files my_plaintext.csv, my_excel.xlsx, and my_rdata.RData, respectively.</p>
-<p>EXTENSION: What factors will influence which file you’ll choose to share with other people? Which is the best choice for 1) an R statistician? 2) a Python statistician? 3) a non-statistician?</p>
 <pre class="r"><code>library(writexl) # load the writexl package
 
 write.csv(x = my_plaintext, file = &quot;my_plaintext.csv&quot;) # save my_plaintext to the file &quot;my_plaintext.csv&quot;
@@ -254,6 +257,7 @@ write.csv(x = my_plaintext, file = &quot;my_plaintext.csv&quot;) # save my_plain
 write_xlsx(x = my_excel, path = &quot;my_excel.xlsx&quot;) # save my_excel to the file &quot;my_excel.xlsx&quot;
 
 save(my_rdata, file = &quot;my_rdata.RData&quot;) # save my_rdata to the file &quot;my_rdata.RData&quot;</code></pre>
+<p>Which file would you give to 1) an R statistician, 2) a Python statistician, 3) a non-statistician?</p>
 </div>
 </div>
 <div id="data-types-in-r" class="section level2">
@@ -288,8 +292,8 @@ glimpse(my_plaintext) # check the data types in my_plaintext</code></pre>
 ## $ `Adjusted P-value`     &lt;dbl&gt; 9.354805e-08, 2.274426e-06, 4.635072e-04,…
 ## $ `Old P-value`          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
 ## $ `Old Adjusted P-value` &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-## $ `Odds Ratio`           &lt;chr&gt; &quot;inf&quot;, &quot;63.233810240963798&quot;, &quot;15.80336972…
-## $ `Combined Score`       &lt;chr&gt; &quot;inf&quot;, &quot;1295.60049657689&quot;, &quot;233.360262941…
+## $ `Odds Ratio`           &lt;dbl&gt; Inf, 63.233810, 15.803370, 70.052553, 14.…
+## $ `Combined Score`       &lt;dbl&gt; Inf, 1295.60050, 233.36026, 826.54514, 15…
 ## $ Genes                  &lt;chr&gt; &quot;UGT1A10;UGT1A1;UGT1A5;UGT1A4;UGT1A3;UGT1…
 ## $ BP                     &lt;chr&gt; &quot;GO_Biological_Process_2018&quot;, &quot;GO_Biologi…
 ## $ Comm                   &lt;chr&gt; &quot;c1&quot;, &quot;c1&quot;, &quot;c1&quot;, &quot;c1&quot;, &quot;c1&quot;, &quot;c1&quot;, &quot;c1&quot;,…
@@ -582,9 +586,58 @@ my_excel_after_idx6$Term # extract the Term column</code></pre>
 ## 4 neuron projection morphogenesis (GO:0048812)</code></pre>
 </div>
 </div>
-<div id="the-for-loop" class="section level2">
-<h2>The <code>for()</code> loop</h2>
-<p>Iterate over a list using the <code>for()</code> loop.</p>
+<div id="operators-and-control-structures" class="section level2">
+<h2>Operators and control structures</h2>
+<p>We use binary operators in our code to manipulate objects in R. They are binary operators because they take an input on the left-hand side (LHS) and an input on the right-hand side (RHS).</p>
+<p>Standard math operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>.</p>
+<p>Modulo operator: <code>%%</code>. Modulo means the remainder after a division.</p>
+<p>Element matching operator: <code>%in%</code>. This asks what elements on the LHS are also on the RHS.</p>
+<p>Comparison operator: <code>==</code>. This asks whether the LHS is exactly the same as RHS.</p>
+<p>Question: what is the difference between <code>%in%</code> and <code>==</code>? What is the difference in the output?</p>
+<pre class="r"><code>c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;) %in% LETTERS # A, B, and C, separately, exist as elements in LETTERS, to TRUE is returned three times</code></pre>
+<pre><code>## [1] TRUE TRUE TRUE</code></pre>
+<pre class="r"><code>c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;) == LETTERS # the LHS and RHS objects are not exactly the same, so FALSE is returned once</code></pre>
+<pre><code>## Warning in c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;) == LETTERS: longer object length is not a
+## multiple of shorter object length</code></pre>
+<pre><code>##  [1]  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [12] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 6 entries ]</code></pre>
+<p>Caution: don’t confuse the assignment operator <code>=</code> with the comparison operator <code>==</code>.</p>
+<div id="exercise-5" class="section level3">
+<h3>Exercise 5</h3>
+<p>Is there a term in <code>my_plaintext</code> called “Chemical carcinogenesis”? How about “Chronic inflammation”?</p>
+<pre class="r"><code>c(&quot;Chemical carcinogenesis&quot;, &quot;Chronic inflammation&quot;) %in% my_plaintext$Term # TRUE FALSE</code></pre>
+<pre><code>## [1]  TRUE FALSE</code></pre>
+<p>Control structures allow us to ask R to make decisions about what code to run. The key structures are <code>if()</code>, <code>else</code>, <code>for()</code>, and <code>while()</code>.</p>
+<p>To write an <code>if()</code> statement, first specify the condition, then write commands to be run if the condition is satisfied.</p>
+<p>If the condition is not satisfied, then the commands in the <code>else {...}</code> block will be run, if one is present.</p>
+<p>It is possible to chain multiple <code>if()</code> statements by using <code>else if()</code>.</p>
+<pre class="r"><code>my_pvalue &lt;- 0.01
+
+if(my_pvalue &lt; 0.05) {                   # condition 1
+    cat(&quot;Significant p-value!\n&quot;)        # run if condition 1 is satisfied
+} else if(my_pvalue &gt;= 0.05) {           # condition 2
+    cat(&quot;Not significant p-value...\n&quot;)  # run if condition 2 is satisfied
+}</code></pre>
+<pre><code>## Significant p-value!</code></pre>
+</div>
+<div id="exercise-6" class="section level3">
+<h3>Exercise 6</h3>
+<p>Change the code below to print significance stars to the screen: <code>***</code> for p-values better than 0.001, <code>**</code> for p-values better than 0.01, <code>*</code> for p-values better than 0.05, and <code>n.s.</code> for p-values worse or equal to 0.05. Change the value of <code>my_pvalue2</code> to test your code.</p>
+<pre class="r"><code>my_pvalue2 &lt;- 0.0001
+
+if(my_pvalue2 &lt; 0.001) {         # condition 1: less than 0.001
+    cat(&quot;***\n&quot;)                 # print ***
+} else if(my_pvalue2 &lt; 0.01) {   # condition 2: less than 0.01
+    cat(&quot;**\n&quot;)                  # print **
+} else if(my_pvalue2 &lt; 0.05) {   # condition 3: less than 0.05
+    cat(&quot;*\n&quot;)                   # print *
+} else if(my_pvalue2 &gt;= 0.05) {  # condition 4: greater than or equal to 0.05
+    cat(&quot;n.s.\n&quot;)                # print n.s.
+}</code></pre>
+<pre><code>## ***</code></pre>
+<p>Sometimes we want to run code more than once, for example if we want to process all elements of a list in the same way.</p>
+<p>We can iterate over a list using the <code>for()</code> loop.</p>
 <p>This means doing the same set of commands for each item in the loop.</p>
 <p>First, initialise a list of items that you’re interested in.</p>
 <p>Then, write the commands to be done of those items in a <code>for()</code> loop code block.</p>
@@ -628,8 +681,24 @@ for(item in my_interest) { # go through the items in the my_interest list one by
 ## The 8 th column in my_plaintext is called Odds.Ratio 
 ## The 9 th column in my_plaintext is called Combined.Score 
 ## The 10 th column in my_plaintext is called Genes</code></pre>
-<div id="exercise-5" class="section level3">
-<h3>Exercise 5</h3>
+<p>A <code>while()</code> loop combines the power of <code>if()</code> and <code>for()</code> in that it iterates until a condition is met.</p>
+<pre class="r"><code>my_term &lt;- &quot;&quot;                         # initialise a test variable
+i &lt;- 1                                # initialise a counter
+while(!grepl(&quot;retinoic&quot;, my_term)) {  # iterate until we find “retinoic”:
+  my_term &lt;- my_plaintext$Term[i]       # update the test variable
+  cat(as.character(my_term), &quot;\n&quot;)                    # print to the screen
+  i &lt;- i + 1                            # increment counter
+}</code></pre>
+<pre><code>## flavonoid glucuronidation (GO:0052696) 
+## xenobiotic glucuronidation (GO:0052697) 
+## cellular glucuronidation (GO:0052695) 
+## coumarin metabolic process (GO:0009804) 
+## glucuronate metabolic process (GO:0019585) 
+## retinoic acid metabolic process (GO:0042573)</code></pre>
+<p>Reason with yourself why the code stopped after printing six lines. What would happen if you change “retinoic” into “hormone”?</p>
+</div>
+<div id="exercise-7" class="section level3">
+<h3>Exercise 7</h3>
 <p>Use a <code>for()</code> loop to find all of the Terms in <code>my_excel</code> which contain: a) “neuron”, b) “membrane”, c) “development”. It’s your choice whether you want to use base R functions or <code>dplyr</code> for the subsetting!</p>
 <pre class="r"><code>my_interest2 &lt;- c(&quot;neuron&quot;, &quot;membrane&quot;, &quot;development&quot;)
 
@@ -806,8 +875,8 @@ for(item in my_interest2) {
 ##  25. └─tibble:::`[.tbl_df`(my_excel, 100)
 ##  26.   └─tibble:::check_names_df(i, x)
 ##  27.     └─tibble:::check_names_df_numeric(j, x)</code></pre>
-<div id="exercise-6" class="section level3">
-<h3>Exercise 6</h3>
+<div id="exercise-8" class="section level3">
+<h3>Exercise 8</h3>
 <p>Run the following commands, which will throw warnings or errors. Reason with yourself or check online to understand what happened. Change the code to clear the error.</p>
 <pre class="r"><code>try({
     log(-1)
@@ -882,6 +951,45 @@ for(item in my_interest2) {
 <pre class="r"><code># \\d{2} means match 2 digits
 # / means match the forward slash
 # \\d{3} means match 3 digits</code></pre>
+<p>For the first 20 terms in <code>my_excel</code>, check if the GO tag is there, and if it is, print the term to the screen. If the term doesn’t have a GO tag, print “uninteresting” to the screen instead.</p>
+<pre class="r"><code>for (i in 1:20) {
+    if(grepl(&quot;GO:\\d+&quot;, my_excel$Term[i])) {
+        cat(my_excel$Term[i], &quot;\n&quot;)
+    } else {
+        cat(&quot;uninteresting\n&quot;)
+    }
+}</code></pre>
+<pre><code>## flavonoid glucuronidation (GO:0052696) 
+## xenobiotic glucuronidation (GO:0052697) 
+## cellular glucuronidation (GO:0052695) 
+## coumarin metabolic process (GO:0009804) 
+## glucuronate metabolic process (GO:0019585) 
+## retinoic acid metabolic process (GO:0042573) 
+## cytokine-mediated signaling pathway (GO:0019221) 
+## indolalkylamine catabolic process (GO:0046218) 
+## negative regulation of T cell apoptotic process (GO:0070233) 
+## smoothened signaling pathway (GO:0007224) 
+## regulation of defense response (GO:0031347) 
+## uninteresting
+## uninteresting
+## uninteresting
+## uninteresting
+## uninteresting
+## uninteresting
+## uninteresting
+## uninteresting
+## uninteresting</code></pre>
+<p>The below code is intended to extract rows 2 to 1000 in <code>my_excel</code>, filter those rows for those with Odds Ratio above 100, and return the sum of all values in the Odds Ratio column for each gene set.</p>
+<p>Fix the errors in the below code.</p>
+<pre class="r"><code>my_newdata &lt;- my_excel[2:1000,] %&gt;% filter(`Odds Ratio` &gt; 100)
+
+for (geneset in unique(my_newdata$Gene_set)) {
+    my_loopdata &lt;- my_newdata %&gt;% filter(Gene_set == geneset)
+    my_sum &lt;- sum(my_loopdata$`Odds Ratio`)
+    cat(&quot;The sum for&quot;, geneset, &quot;is&quot;, my_sum, &quot;\n&quot;)
+}</code></pre>
+<pre><code>## The sum for GO_Biological_Process_2018 is 1470.356 
+## The sum for KEGG_2019_Human is 485.0998</code></pre>
 <p>Congratulations for reaching the end of this course!</p>
 </div>
 </div>

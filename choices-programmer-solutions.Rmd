@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 options(max.print = 20)
 
 ```
@@ -62,6 +62,10 @@ my_plaintext <- read.csv("terms.csv") # read the plaintext file
 
 my_excel <- read_excel("terms.xlsx") # read the excel file
 
+my_excel$`Odds Ratio` <- as.numeric(my_excel$`Odds Ratio`) # convert the Odds Ratio column to numeric
+
+my_excel$`Combined Score` <- as.numeric(my_excel$`Combined Score`) # convert the Combined Score column to numeric
+
 load("terms.RData") # read the RData file
 
 ```
@@ -76,8 +80,6 @@ To write RData files, use `save()`.
 
 Complete the code below to save the `my_plaintext`, `my_excel`, and `my_rdata` objects to the files my_plaintext.csv, my_excel.xlsx, and my_rdata.RData, respectively.
 
-EXTENSION: What factors will influence which file you'll choose to share with other people? Which is the best choice for 1) an R statistician? 2) a Python statistician? 3) a non-statistician? 
-
 ```{r}
 
 library(writexl) # load the writexl package
@@ -89,6 +91,8 @@ write_xlsx(x = my_excel, path = "my_excel.xlsx") # save my_excel to the file "my
 save(my_rdata, file = "my_rdata.RData") # save my_rdata to the file "my_rdata.RData"
 
 ```
+
+Which file would you give to 1) an R statistician, 2) a Python statistician, 3) a non-statistician?
 
 ## Data types in R
 
@@ -242,9 +246,83 @@ my_excel %>% filter(`P-value` < 1e-4) %>% filter(grepl("neuron", Term)) %>% sele
 
 ```
 
-## The `for()` loop
+## Operators and control structures
 
-Iterate over a list using the `for()` loop.
+We use binary operators in our code to manipulate objects in R. They are binary operators because they take an input on the left-hand side (LHS) and an input on the right-hand side (RHS).
+
+Standard math operators: `+`, `-`, `*`, `/`, `^`.
+
+Modulo operator: `%%`. Modulo means the remainder after a division.
+
+Element matching operator: `%in%`. This asks what elements on the LHS are also on the RHS.
+
+Comparison operator: `==`. This asks whether the LHS is exactly the same as RHS.
+
+Question: what is the difference between `%in%` and `==`? What is the difference in the output?
+
+```{r}
+
+c("A", "B", "C") %in% LETTERS # A, B, and C, separately, exist as elements in LETTERS, to TRUE is returned three times
+
+c("A", "B", "C") == LETTERS # the LHS and RHS objects are not exactly the same, so FALSE is returned once
+
+```
+
+Caution: don't confuse the assignment operator `=` with the comparison operator `==`.
+
+### Exercise 5
+
+Is there a term in `my_plaintext` called "Chemical carcinogenesis"? How about "Chronic inflammation"?
+
+```{r}
+
+c("Chemical carcinogenesis", "Chronic inflammation") %in% my_plaintext$Term # TRUE FALSE
+
+```
+
+Control structures allow us to ask R to make decisions about what code to run. The key structures are `if()`, `else`, `for()`, and `while()`.
+
+To write an `if()` statement, first specify the condition, then write commands to be run if the condition is satisfied.
+
+If the condition is not satisfied, then the commands in the `else {...}` block will be run, if one is present.
+
+It is possible to chain multiple `if()` statements by using `else if()`.
+
+```{r}
+
+my_pvalue <- 0.01
+
+if(my_pvalue < 0.05) {                   # condition 1
+    cat("Significant p-value!\n")        # run if condition 1 is satisfied
+} else if(my_pvalue >= 0.05) {           # condition 2
+    cat("Not significant p-value...\n")  # run if condition 2 is satisfied
+}
+
+```
+
+### Exercise 6
+
+Change the code below to print significance stars to the screen: `***` for p-values better than 0.001, `**` for p-values better than 0.01, `*` for p-values better than 0.05, and `n.s.` for p-values worse or equal to 0.05. Change the value of `my_pvalue2` to test your code.
+
+```{r}
+
+my_pvalue2 <- 0.0001
+
+if(my_pvalue2 < 0.001) {         # condition 1: less than 0.001
+    cat("***\n")                 # print ***
+} else if(my_pvalue2 < 0.01) {   # condition 2: less than 0.01
+    cat("**\n")                  # print **
+} else if(my_pvalue2 < 0.05) {   # condition 3: less than 0.05
+    cat("*\n")                   # print *
+} else if(my_pvalue2 >= 0.05) {  # condition 4: greater than or equal to 0.05
+    cat("n.s.\n")                # print n.s.
+}
+
+```
+
+Sometimes we want to run code more than once, for example if we want to process all elements of a list in the same way.
+
+We can iterate over a list using the `for()` loop.
 
 This means doing the same set of commands for each item in the loop.
 
@@ -283,7 +361,23 @@ for(i in 1:10) {
 
 ```
 
-### Exercise 5
+A `while()` loop combines the power of `if()` and `for()` in that it iterates until a condition is met.
+
+```{r}
+
+my_term <- ""                         # initialise a test variable
+i <- 1                                # initialise a counter
+while(!grepl("retinoic", my_term)) {  # iterate until we find “retinoic”:
+  my_term <- my_plaintext$Term[i]       # update the test variable
+  cat(as.character(my_term), "\n")                    # print to the screen
+  i <- i + 1                            # increment counter
+}
+
+```
+
+Reason with yourself why the code stopped after printing six lines. What would happen if you change "retinoic" into "hormone"?
+
+### Exercise 7
 
 Use a `for()` loop to find all of the Terms in `my_excel` which contain: a) "neuron", b) "membrane", c) "development". It's your choice whether you want to use base R functions or `dplyr` for the subsetting!
 
@@ -339,7 +433,7 @@ try({
 
 ```
 
-### Exercise 6
+### Exercise 8
 
 Run the following commands, which will throw warnings or errors. Reason with yourself or check online to understand what happened. Change the code to clear the error.
 
@@ -395,6 +489,36 @@ my_excel %>% filter(grepl("\\d{2}/\\d{3}", Overlap)) %>% select(Term)
 # \\d{2} means match 2 digits
 # / means match the forward slash
 # \\d{3} means match 3 digits
+
+```
+
+For the first 20 terms in `my_excel`, check if the GO tag is there, and if it is, print the term to the screen. If the term doesn't have a GO tag, print "uninteresting" to the screen instead.
+
+```{r}
+
+for (i in 1:20) {
+    if(grepl("GO:\\d+", my_excel$Term[i])) {
+        cat(my_excel$Term[i], "\n")
+    } else {
+        cat("uninteresting\n")
+    }
+}
+
+```
+
+The below code is intended to extract rows 2 to 1000 in `my_excel`, filter those rows for those with Odds Ratio above 100, and return the sum of all values in the Odds Ratio column for each gene set.
+
+Fix the errors in the below code.
+
+```{r}
+
+my_newdata <- my_excel[2:1000,] %>% filter(`Odds Ratio` > 100)
+
+for (geneset in unique(my_newdata$Gene_set)) {
+    my_loopdata <- my_newdata %>% filter(Gene_set == geneset)
+    my_sum <- sum(my_loopdata$`Odds Ratio`)
+    cat("The sum for", geneset, "is", my_sum, "\n")
+}
 
 ```
 
